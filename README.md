@@ -1,16 +1,6 @@
 # Synopsis
 
-Red's Discord bot (by Twenty Six 26) is a nice python based discord bot. This is a cog for that bot, allowing for a voucher system to exist. This can assist admins to decide who to make members as a community grows. It also saves this state, so admins can see "who vouched for who"
-
-# Code Example
-
-!vouch (user)
-
-This records a vouch that you (author) have vouched for the user (user). ! may not be your trigger, so use whatever your trigger is.
-
-# Motivation
-
-Couldn't find an existing voucher system, and wanted one, so I wrote it.
+Red's Discord bot (by Twenty Six 26) is a nice python based discord bot. This repo contains a few cogs with functionality that I personally wanted. 
 
 # License
 
