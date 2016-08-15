@@ -1,0 +1,8 @@
+{
+    "AUTHOR" : "nigori",
+    "SHORT" : "Vouch for friends.",
+    "DESCRIPTION" : "Allows member to vouch for non-members. Keeps record of who vouched for who.",
+    "DISABLED" : false,
+    "NAME" : "Vouchers",
+    "INSTALL_MSG" : "Use <trigger>vouch to start vouching!"
+}

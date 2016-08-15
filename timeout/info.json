@@ -1,0 +1,8 @@
+{
+    "AUTHOR" : "nigori",
+    "SHORT" : "Kick the spammers.",
+    "DESCRIPTION" : "Bot's watch for people spammng messages. Configurable thresholds.",
+    "DISABLED" : false,
+    "NAME" : "Timeout",
+    "INSTALL_MSG" : "You may want to configure spam sensitivity."
+}
