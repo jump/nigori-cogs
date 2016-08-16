@@ -10,7 +10,7 @@ class Timeout:
 
     def __init__(self, bot):
         self.bot = bot
-        self.RX_MESSAGE_THRESHOLD = 5           # number of messages rx before consider spam
+        self.RX_MESSAGE_THRESHOLD = 7           # number of messages rx before consider spam
         self.RX_MESSAGE_DELTA_THRESHOLD = 1.5   # messages rx with 1.5 or less seconds between
         self.message_history = {}
         self.spam_levels = {}
