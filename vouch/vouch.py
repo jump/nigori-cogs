@@ -6,22 +6,21 @@ from .utils import checks
 import datetime
 
 class Vouch:
-    """Vouch users. The more I stare at this word (Vouch) the less it means."""
 
+
+    """Vouch users. The more I stare at this word (Vouch) the less it means."""
 
     def __init__(self, bot):
         self.bot = bot
         try:
             self.vouchers = fileIO("data/vouchers/vouchers.json","load")
         except:
-            await.self.bot.say("no existing vouchers found.")
+            print("Exception when loading vouchers!")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(create_instant_invite=True)
     async def vouch(self, ctx, user : discord.Member=None):
         """Record vouches for when members want to vouch for non members to become members."""
-
-        response = ''
 
         if user !=None:
             if user.id == self.bot.user.id:
@@ -55,9 +54,9 @@ class Vouch:
                             return
 
                 #record the vouching
-                self.vouchers.append({"VOUCHER" : ctx.message.author.display_name,
-                "USER" : user.display_name, "ID" : user.id,
-                "DATE" : str( "{:%B %d, %Y}".format(datetime.datetime.now())) })
+                self.vouchers.append({"VOUCHER": ctx.message.author.display_name,
+                "USER" : user.display_name, "ID": user.id,
+                "DATE" : str("{:%B %d, %Y}".format(datetime.datetime.now()))})
                 fileIO("data/vouchers/vouchers.json", "save", self.vouchers)
                 response = " - your voucher for " + user.mention + " has been recorded."
                 await self.bot.say(ctx.message.author.mention + response )
@@ -65,6 +64,9 @@ class Vouch:
         else:
             response = "Usage: !vouch <user>"
             await self.bot.say(response)
+
+    # consider completely replacing show vouches to
+    # !vouch show all, and !vouch show <user>
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
@@ -92,6 +94,9 @@ def build_folders():
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
+    if not os.path.isfile("data/vouchers/vouchers.json"):
+        print("creating default vouchers.json...")
+        fileIO("data/vouchers/vouchers.json", "save", {})
 
 def setup(bot):
     build_folders()
