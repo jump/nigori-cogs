@@ -18,11 +18,11 @@ class Announcer:
         try:
             self.data = fileIO(data_file,"load")
         except:
-            print("Exception ocured when attempting to load voice files!")
+            print("Failure to load voice files. Creating new blank data file.")
             self.data = {}
             save()
 
-    def on_voice_state_update(self, member):
+    async def on_voice_state_update(self, member):
         if member.voice_channel:
             # TODO: get the bot to join the same voice channel
             voice_file = get_user_voice_file(member)
@@ -31,6 +31,14 @@ class Announcer:
             self.bot.join_voice_channel(member.voice_channel)
 
             voice_client = self.bot.voice_client_in(member.server)
+
+            try:
+                voice_client.audio_player.process.kill()
+            except AttributeError:
+                pass
+            except ProcessLookupError:
+                pass
+
             voice_client.create_ffmpeg_player(voice_file, False, options='-b:a 64k -bufsize 64k')
             voice_client.audio_player.volume = self.get_server_settings(member.server)['VOLUME'] / 100
             voice_client.audio_player.start()
@@ -67,10 +75,6 @@ def build_folders():
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
-    if not os.path.isfile("data/Announcer/Announcer.json"):
-        print("creating default Announcer.json...")
-        self.data = {}
-        save()
 
 def setup(bot):
     build_folders()
