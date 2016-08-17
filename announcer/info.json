@@ -1,8 +1,8 @@
 {
     "AUTHOR" : "nigori",
-    "SHORT" : "Kick the spammers.",
-    "DESCRIPTION" : "Bot's watch for people spammng messages. Configurable thresholds.",
+    "SHORT" : "Annouce voice channel joins.",
+    "DESCRIPTION" : "Announce in a tts voice when someone joins any voice channel.",
     "DISABLED" : false,
-    "NAME" : "Timeout",
-    "INSTALL_MSG" : "You may want to configure spam sensitivity."
+    "NAME" : "Announcer",
+    "INSTALL_MSG" : "The Announcer is in the building."
 }
