@@ -12,6 +12,7 @@ class Timeout:
         self.bot = bot
         self.RX_MESSAGE_THRESHOLD = 7           # number of messages rx before consider spam
         self.RX_MESSAGE_DELTA_THRESHOLD = 1.5   # messages rx with 1.5 or less seconds between
+        self.RX_MESSAGE_COOLDOWN = 6            # number of seconds where spam detection resets
         self.message_history = {}
         self.spam_levels = {}
         self.shitlist = []
@@ -79,6 +80,18 @@ class Timeout:
         # we can stop right here
         if num_messages < self.RX_MESSAGE_THRESHOLD:
             return
+
+        # if it's been at least self.RX_MESSAGE_COOLDOWN seconds since their last message
+        # we can reset the message spam counter for this user. 
+        try:
+            latest_message = message_timestamps[len(message_timestamps)-1] 
+            one_before = message_timestamps[len(message_timestamps)-2]
+            if latest_message - one_before <= self.RX_MESSAGE_COOLDOWN:
+                self.message_history[author] = []
+                self.spam_levels[author] = 1
+                return
+        except:
+            print("attempted to determime if spam detection should be reset, but hit exception")
 
         # compare self.RX_MESSAGE_THRESHOLD total messages from the message history
         # if enough flags found for RX Messages (sent too fast), globally
