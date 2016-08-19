@@ -34,9 +34,10 @@ class Announcer:
             # get bot to join proper voice channel
             await self.bot.join_voice_channel(member.voice_channel)
 
-            self.speak_my_child(self, member)
+            # attempt to speak the TTS name
+            await self.speak_my_child(self, member, voice_file)
 
-    async def speak_my_child(self, member):
+    async def speak_my_child(self, member, voice_file):
             voice_client = self.bot.voice_client_in(member.server)
 
             if voice_client:
