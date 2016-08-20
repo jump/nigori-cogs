@@ -1,10 +1,10 @@
-import discord
 import os
-from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
 import datetime
 from gtts import gTTS
+from time import sleep
+import asyncio
 
 __author__ = 'nigori'
 __version__ = '0.0.1'
@@ -41,21 +41,16 @@ class Announcer:
             voice_client = self.bot.voice_client_in(member.server)
 
             if voice_client:
-                try:
-                    voice_client.audio_player.process.kill()
-                except AttributeError:
-                    pass
-                except ProcessLookupError:
-                    pass
-
                 voice_client.create_ffmpeg_player(voice_file, False, options='-b:a 64k -bufsize 64k')
                 voice_client.audio_player.volume = self.get_server_settings(member.server)['VOLUME'] / 100
                 await voice_client.audio_player.start()
-
+                await asyncio.sleep(6)
+                await voice_client.audio_player.stop()
+            else
+                print("within speak my child, we don't have a handle to a voice client. that sucks.")
 
     def get_user_voice_file(self, member):
         # load voice file for the user that joined
-
         print("attempting to get user voice file for ", member.name)
 
         if not os.path.isfile(self.data_directory + member.name + ".mp3"):
@@ -72,7 +67,6 @@ class Announcer:
 
     def create_user_voice_file(self, member):
         print("attempting to create user voice file for ", member.name)
-        name = member.name
         voice_audio = gTTS(text=member.name, lang='en')
         voice_file = self.data_directory + member.name + ".mp3"
         voice_audio.save(voice_file)
@@ -84,7 +78,6 @@ def save(self):
     except:
         print("saving an fresh announcer.json")
         fileIO("data/announcer/announcer.json", "save", {})
-
 
 def build_folders():
     folders = ("data", "data/announcer/")
