@@ -1,0 +1,8 @@
+{
+    "AUTHOR" : "nigori",
+    "SHORT" : "set a bot's status on startup.",
+    "DESCRIPTION" : "Set a status message that you'd like to have your bot startup with",
+    "DISABLED" : false,
+    "NAME" : "Auto Status",
+    "INSTALL_MSG" : "use !status <message> to set the status!"
+}
