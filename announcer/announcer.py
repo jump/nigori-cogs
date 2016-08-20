@@ -24,6 +24,9 @@ class Announcer:
             save(self)
 
     async def on_voice_state_update(self, before, member):
+        # bot should not announce itself when joining a channel
+        if member.id == self.bot.user.id:
+            return
         if member.voice_channel:
             voice_file = self.get_user_voice_file(member)
 
