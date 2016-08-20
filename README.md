@@ -14,6 +14,10 @@ This cog will kick people from the server if they start spamming. Thresholds are
 
 This cog's initial goal was to catch events for when members enter voice channels, and use gTTs to playback the username in the channel. (Announce new channel joins to existing members in a voice channel.) This is in development, and is not currently working.
 
+## Autostatus
+
+This cog is super simple, sets the status of the bot on startup. Saves this status to a json file, and auto loads it every time the bot joins a server, on_ready
+
 # License
 
 See the LICENSE file. Spoiler Alert (it's MIT)
