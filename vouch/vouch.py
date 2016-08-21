@@ -65,9 +65,6 @@ class Vouch:
             response = "Usage: !vouch <user>"
             await self.bot.say(response)
 
-    # consider completely replacing show vouches to
-    # !vouch show all, and !vouch show <user>
-
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def showvouches(self):
@@ -85,8 +82,6 @@ class Vouch:
         self.vouchers.clear()
         fileIO("data/vouchers/vouchers.json", "save", self.vouchers)
         await self.bot.say("Existing vouchers have been cleared.")
-
-
 
 def build_folders():
     folders = ("data", "data/vouchers/")

@@ -20,7 +20,6 @@ class Autostatus:
     @commands.command(pass_context=False, no_pm=False)
     @checks.mod_or_permissions(manage_messages=True)
     async def status(self, newstatus=None):
-
         if newstatus:
             print(newstatus)
             self.autostatus['startup'] = str(newstatus).strip()
