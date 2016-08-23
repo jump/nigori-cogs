@@ -91,7 +91,7 @@ def build_folders():
             os.makedirs(folder)
     if not os.path.isfile("data/vouchers/vouchers.json"):
         print("creating default vouchers.json...")
-        fileIO("data/vouchers/vouchers.json", "save", {})
+        fileIO("data/vouchers/vouchers.json", "save", [])
 
 def setup(bot):
     build_folders()
