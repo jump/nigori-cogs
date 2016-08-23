@@ -19,10 +19,6 @@ class Timeout:
         self.spam_levels = {}
         self.shitlist = []
         self.mutelist = {}
-        #self.X = asyncio.ensure_future(sleep_timer)
-
-    #async def __unload(self, bot):
-    #    self.X = X.cancel()
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
@@ -42,7 +38,6 @@ class Timeout:
 
         else:
             return
-
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
@@ -65,7 +60,6 @@ class Timeout:
             message = "Muting {} for specified time of {} minutes.".format(member.display_name, minutes)
             await self.bot.say(message)
             await self.sleep_timer(member, minutes)
-
 
     async def sleep_timer(self, member : discord.Member=None, time=None):
         if time:
