@@ -54,7 +54,7 @@ class Timeout:
                 self.mutelist[member.id] = timestamp
                 message = "Muting {} for default time of 3 minutes.".format(member.display_name)
                 await self.bot.say(message)
-                await self.sleep_timer(self, member, 3)
+                await self.sleep_timer(member, 3)
             except:
                 print("failure in timeout when attempting to change server_voice_state command.")
                 pass
@@ -64,18 +64,18 @@ class Timeout:
             self.mutelist[member.id] = timestamp
             message = "Muting {} for specified time of {} minutes.".format(member.display_name, minutes)
             await self.bot.say(message)
-            await self.sleep_timer(self, member, minutes)
+            await self.sleep_timer(member, minutes)
 
 
     async def sleep_timer(self, member, time):
         asyncio.sleep(time*60)
-        await unmute(self, member)
+        await self.unmute(member)
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def unmute(self, member):
-        await member.server.server_voice_state(member.id, member.server.id, mute=False, deafen=False)
-        self.mutelist.pop(member, None)
+    async def unmute(self, member: discord.Member=None):
+        await self.bot.server_voice_state(member, mute=False, deafen=False)
+        self.mutelist.pop(member.id, None)
         message = "{} is now unmuted".format(member.display_name)
         await self.bot.say(message)
 
