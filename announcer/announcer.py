@@ -1,46 +1,49 @@
 import os
 from .utils.dataIO import fileIO
-from .utils import checks
-import datetime
 from gtts import gTTS
-from time import sleep
 import asyncio
+import discord
 
 __author__ = 'nigori'
 __version__ = '0.0.1'
 
+
 class Announcer:
 
-    """Announcer users. Attempt to get the bot to join a channel, then play an MP3."""
-
+    """Announcer users. Get the bot to join a channel, then play an MP3."""
     def __init__(self, bot):
         self.bot = bot
         self.data_directory = "data/announcer/"
         self.data = None
 
         try:
-            self.data = fileIO("data/announcer/announcer.json","load")
+            self.data = fileIO("data/announcer/announcer.json", "load")
         except:
             save(self)
 
     async def on_voice_state_update(self, before, member):
         # bot should not announce itself when joining a channel
-        # so the bot is loop joining the channel, whch is causing the crash. 
-        print("Grabbed User:{} with Userid:{}, and the bot id is {}".format(member.name, member.id, self.bot.user.id))
+        # so the bot is loop joining the channel, whch is causing the crash.
+        print("Grabbed User:%s with id:%s, and the bot id:%s" %
+              (member.name, member.id, self.bot.user.id))
         if member.id == self.bot.user.id:
+            print("returning early, we detected Harambe joining a channel")
             return
         elif member.voice_channel:
             voice_file = self.get_user_voice_file(member)
-
+            if not voice_file:
+                print("failed to get voice file for {}".format(member.name))
+                return
             print("got voice file:" + voice_file)
             print(member.name)
             print("self.data: " + str(self.data))
 
-            # get bot to join proper voice channel
-            # this line is actually causing the problem, because member.id != bot.user.id for some strange reason
-            await self.bot.join_voice_channel(member.voice_channel)
-
-            # attempt to speak the TTS name
+            # get the bot to join the channel
+            try:
+                await self.bot.join_voice_channel(member.voice_channel)
+            except discord.opus.OpusNotLoaded:
+                await self.bot.say("Opus is not loaded! Will not work.")
+            # attempt to speak the TTS name in channel
             await self.speak_my_child(self, member, voice_file)
 
     async def speak_my_child(self, member, voice_file):
@@ -53,7 +56,7 @@ class Announcer:
                 await asyncio.sleep(6)
                 await voice_client.audio_player.stop()
             else:
-                print("within speak my child, we don't have a handle to a voice client. that sucks.")
+                print("in speakmychild, don't have a handle to voice client.")
 
     def get_user_voice_file(self, member):
         # load voice file for the user that joined
