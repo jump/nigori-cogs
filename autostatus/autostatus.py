@@ -13,7 +13,7 @@ class Autostatus:
         self.bot = bot
         self.autostatus = {}
         try:
-            self.autostatus['startup'] = fileIO("data/autostatus/autostatus.json","load")
+            self.autostatus = fileIO("data/autostatus/autostatus.json","load")
         except:
             print("Exception when loading autostatus!")
 
@@ -31,6 +31,7 @@ class Autostatus:
 
     async def on_ready(self):
         if self.autostatus['startup']:
+            print("attempting to set the status to {}".format(self.autostatus['startup']))
             await self.bot.change_status(discord.Game(name=self.autostatus['startup']))
         else:
             return
