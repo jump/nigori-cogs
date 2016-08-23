@@ -67,13 +67,15 @@ class Timeout:
             await self.sleep_timer(member, minutes)
 
 
-    async def sleep_timer(self, member, time):
-        asyncio.sleep(time*60)
-        await self.unmute(member)
+    async def sleep_timer(self, member : discord.Member=None, time=None):
+        if time:
+            minutes = int(time*60)
+            await asyncio.sleep(minutes)
+            await self.unmute_member(member)
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def unmute(self, member: discord.Member=None):
+    async def unmute_member(self, member: discord.Member=None):
         await self.bot.server_voice_state(member, mute=False, deafen=False)
         self.mutelist.pop(member.id, None)
         message = "{} is now unmuted".format(member.display_name)
