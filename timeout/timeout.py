@@ -3,6 +3,9 @@ import os
 from discord.ext import commands
 from .utils import checks
 from datetime import datetime
+from threading import Thread
+from time import sleep
+import asyncio
 
 class Timeout:
 
@@ -10,16 +13,20 @@ class Timeout:
 
     def __init__(self, bot):
         self.bot = bot
-        self.RX_MESSAGE_THRESHOLD = 7           # number of messages rx before consider spam
+        self.RX_MESSAGE_THRESHOLD = 5           # number of messages rx before consider spam
         self.RX_MESSAGE_DELTA_THRESHOLD = 1.5   # messages rx with 1.5 or less seconds between
-        self.RX_MESSAGE_COOLDOWN = 6            # number of seconds where spam detection resets
         self.message_history = {}
         self.spam_levels = {}
         self.shitlist = []
+        self.mutelist = {}
+        #self.X = asyncio.ensure_future(sleep_timer)
 
-    @commands.command(pass_context=True)
+    #async def __unload(self, bot):
+    #    self.X = X.cancel()
+
+    @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def timeout(self, ctx, command):
+    async def spam(self, command=None):
         if command == "show":
             if self.shitlist:
                 for item in self.shitlist:
@@ -35,6 +42,42 @@ class Timeout:
 
         else:
             return
+
+
+    @commands.command(pass_context=False)
+    @checks.mod_or_permissions(kick_members=True)
+    async def timeout(self, member : discord.Member=None, minutes=None):
+        if member and not minutes:
+            try:
+                await self.bot.server_voice_state(member, mute=True, deafen=True)
+                timestamp = datetime.now().timestamp()
+                self.mutelist[member.id] = timestamp
+                message = "Muting {} for default time of 3 minutes.".format(member.display_name)
+                await self.bot.say(message)
+                await self.sleep_timer(self, member, 3)
+            except:
+                print("failure in timeout when attempting to change server_voice_state command.")
+                pass
+        elif member and minutes:
+            await self.bot.server_voice_state(member, mute=True, deafen=True)
+            timestamp = datetime.now().timestamp()
+            self.mutelist[member.id] = timestamp
+            message = "Muting {} for specified time of {} minutes.".format(member.display_name, minutes)
+            await self.bot.say(message)
+            await self.sleep_timer(self, member, minutes)
+
+
+    async def sleep_timer(self, member, time):
+        asyncio.sleep(time*60)
+        await unmute(self, member)
+
+    @commands.command(pass_context=False)
+    @checks.mod_or_permissions(kick_members=True)
+    async def unmute(self, member):
+        await member.server.server_voice_state(member.id, member.server.id, mute=False, deafen=False)
+        self.mutelist.pop(member, None)
+        message = "{} is now unmuted".format(member.display_name)
+        await self.bot.say(message)
 
     async def on_message(self, message):
         timestamp = datetime.now().timestamp()
@@ -66,10 +109,6 @@ class Timeout:
                     pass
                     #await self.bot.send_message(message.channel, "I'm not allowed to do that.")
 
-        # once we get here, we should have a dictionary mapping author names
-        # which produces keys that are lists of timestamps corresponding to when
-        # they sent messages.
-
     def check_for_spam(self, author):
         message_timestamps = self.message_history[author]
         num_messages = len(message_timestamps)
@@ -80,18 +119,6 @@ class Timeout:
         # we can stop right here
         if num_messages < self.RX_MESSAGE_THRESHOLD:
             return
-
-        # if it's been at least self.RX_MESSAGE_COOLDOWN seconds since their last message
-        # we can reset the message spam counter for this user. 
-        try:
-            latest_message = message_timestamps[len(message_timestamps)-1] 
-            one_before = message_timestamps[len(message_timestamps)-2]
-            if latest_message - one_before <= self.RX_MESSAGE_COOLDOWN:
-                self.message_history[author] = []
-                self.spam_levels[author] = 1
-                return
-        except:
-            print("attempted to determime if spam detection should be reset, but hit exception")
 
         # compare self.RX_MESSAGE_THRESHOLD total messages from the message history
         # if enough flags found for RX Messages (sent too fast), globally
