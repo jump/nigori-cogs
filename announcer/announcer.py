@@ -25,9 +25,11 @@ class Announcer:
 
     async def on_voice_state_update(self, before, member):
         # bot should not announce itself when joining a channel
+        # so the bot is loop joining the channel, whch is causing the crash. 
+        print("Grabbed User:{} with Userid:{}, and the bot id is {}".format(member.name, member.id, self.bot.user.id))
         if member.id == self.bot.user.id:
             return
-        if member.voice_channel:
+        elif member.voice_channel:
             voice_file = self.get_user_voice_file(member)
 
             print("got voice file:" + voice_file)
@@ -35,6 +37,7 @@ class Announcer:
             print("self.data: " + str(self.data))
 
             # get bot to join proper voice channel
+            # this line is actually causing the problem, because member.id != bot.user.id for some strange reason
             await self.bot.join_voice_channel(member.voice_channel)
 
             # attempt to speak the TTS name
@@ -49,7 +52,7 @@ class Announcer:
                 await voice_client.audio_player.start()
                 await asyncio.sleep(6)
                 await voice_client.audio_player.stop()
-            else
+            else:
                 print("within speak my child, we don't have a handle to a voice client. that sucks.")
 
     def get_user_voice_file(self, member):
