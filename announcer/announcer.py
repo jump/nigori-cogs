@@ -23,11 +23,9 @@ class Announcer:
 
     async def on_voice_state_update(self, before, member):
         # bot should not announce itself when joining a channel
-        # so the bot is loop joining the channel, whch is causing the crash.
         print("Grabbed User:%s with id:%s, and the bot id:%s" %
               (member.name, member.id, self.bot.user.id))
         if member.id == self.bot.user.id:
-            print("returning early, we detected Harambe joining a channel")
             return
         elif member.voice_channel:
             voice_file = self.get_user_voice_file(member)
@@ -38,10 +36,7 @@ class Announcer:
             print(member.name)
             print("self.data: " + str(self.data))
 
-            # get the bot to join the channel
-            # this bot joining voice channel is still the problem
-            # this doesn't seem to return
-            # eventually it will timeout
+            # this next join_voice_channel appears to be causing the timeout
             try:
                 await self.bot.join_voice_channel(member.voice_channel)
             except discord.opus.OpusNotLoaded:
