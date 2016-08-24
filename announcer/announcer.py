@@ -39,14 +39,21 @@ class Announcer:
             print("self.data: " + str(self.data))
 
             # get the bot to join the channel
+            # this bot joining voice channel is still the problem
+            # this doesn't seem to return
+            # eventually it will timeout
             try:
                 await self.bot.join_voice_channel(member.voice_channel)
             except discord.opus.OpusNotLoaded:
+                print("OPUS NO LOADED EXCEPTION!!")
                 await self.bot.say("Opus is not loaded! Will not work.")
+
+            print("PAST JOINING CHANNEL. PRIOR TO SPEAK")
             # attempt to speak the TTS name in channel
             await self.speak_my_child(self, member, voice_file)
 
     async def speak_my_child(self, member, voice_file):
+            print("ATTEMPTING TO MAKE THIS BEAST SPEAK")
             voice_client = self.bot.voice_client_in(member.server)
 
             if voice_client:
@@ -67,7 +74,7 @@ class Announcer:
             self.data[member.name] = voice_file
             save(self)
             return voice_file
-        elif not member.name in self.data:
+        elif member.name not in self.data:
             self.data[member.name] = self.data_directory + member.name + ".mp3"
             save(self)
         else:
@@ -81,6 +88,7 @@ class Announcer:
         voice_audio.save(voice_file)
         return voice_file
 
+
 def save(self):
     try:
         fileIO("data/announcer/announcer.json", "save", self.data)
@@ -88,12 +96,14 @@ def save(self):
         print("saving an fresh announcer.json")
         fileIO("data/announcer/announcer.json", "save", {})
 
+
 def build_folders():
     folders = ("data", "data/announcer/")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
+
 
 def setup(bot):
     build_folders()
