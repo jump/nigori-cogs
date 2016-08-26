@@ -27,15 +27,15 @@ class Announcer:
     async def on_voice_state_update(self, before, member):
         # bot should not announce itself when joining a channel
         log.debug("Grabbed User:%s with id:%s, and the bot id:%s" %
-              (member.name, member.id, self.bot.user.id))
+                  (member.name, member.id, self.bot.user.id))
         if member.id == self.bot.user.id:
             return
-        # add case where if current bot voice channel and member voice 
+        # add case where if current bot voice channel and member voice
         # channel are the same go right to speaking the name
         elif member.voice_channel:
             voice_file = self.get_user_voice_file(member)
             if not voice_file:
-                log.debug("failed to get voice file for {}".format(member.name))
+                log.debug("failed to get voice file: {}".format(member.name))
                 return
             log.debug("got voice file:" + voice_file)
             log.debug(member.name)
