@@ -5,27 +5,27 @@ from .utils.dataIO import fileIO
 from .utils import checks
 import datetime
 
-class Vouch:
 
+class Vouch:
 
     """Vouch users. The more I stare at this word (Vouch) the less it means."""
 
     def __init__(self, bot):
         self.bot = bot
         try:
-            self.vouchers = fileIO("data/vouchers/vouchers.json","load")
+            self.vouchers = fileIO("data/vouchers/vouchers.json", "load")
         except:
             print("Exception when loading vouchers!")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(create_instant_invite=True)
-    async def vouch(self, ctx, user : discord.Member=None):
-        """Record vouches for when members want to vouch for non members to become members."""
+    async def vouch(self, ctx, user: discord.Member=None):
+        """Record vouches, when members want to endose non members."""
 
-        if user !=None:
+        if user:
             if user.id == self.bot.user.id:
                 user = ctx.message.author
-                response = " - thanks for vouching for me, your robot overlord."
+                response = "- thanks for vouching for me, your robot overlord."
                 await self.bot.say(user.mention + response)
 
             elif user.id == ctx.message.author.id:
@@ -33,11 +33,11 @@ class Vouch:
                 await self.bot.say(user.mention + response)
 
             else:
-                #check and see if this author has previously vouched for this user.
+                # see if this author has previously vouched for this user.
                 for item in self.vouchers:
                     if item['VOUCHER'] == ctx.message.author.display_name:
                         if item['USER'] == user.display_name:
-                            response = " you have already vouched for this user."
+                            response = " you have already vouched for this user"
                             await self.bot.say(ctx.message.author.mention + response)
                             return
 
@@ -53,10 +53,11 @@ class Vouch:
                             await self.bot.say(user.display_name + " now has multple vouches.")
                             return
 
-                #record the vouching
+                # record the vouching
                 self.vouchers.append({"VOUCHER": ctx.message.author.display_name,
-                "USER" : user.display_name, "ID": user.id,
-                "DATE" : str("{:%B %d, %Y}".format(datetime.datetime.now()))})
+                                      "USER": user.display_name, "ID": user.id,
+                                      "DATE": str("{:%B %d, %Y}".format(
+                                      datetime.datetime.now()))})
                 fileIO("data/vouchers/vouchers.json", "save", self.vouchers)
                 response = " - your voucher for " + user.mention + " has been recorded."
                 await self.bot.say(ctx.message.author.mention + response )
