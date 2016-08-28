@@ -72,7 +72,7 @@ class Timeout:
 
     async def sleep_timer(self, member: discord.Member=None, time=None):
         if time:
-            minutes = int(time*60)
+            minutes = int(time)
             await asyncio.sleep(minutes)
             await self.unmute_member(member)
 
