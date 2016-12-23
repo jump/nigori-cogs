@@ -18,9 +18,16 @@ class Timeout:
         self.bot = bot
 
         # number of messages RX before considering it spam
-        self.RX_MESSAGE_THRESHOLD = 5
+        self.RX_MESSAGE_THRESHOLD = 7
+
+        # spamlevel before warning
+        self.RX_MESSAGE_WARNING_THRESHOLD = 4
+
         # delta between messages before considering it spam
-        self.RX_MESSAGE_DELTA_THRESHOLD = 1.5
+        self.RX_MESSAGE_DELTA_THRESHOLD = 1.25
+
+        # delta between messages before we reset the spam counter
+        self.RX_MESSAGE_RESET_THRESHOLD = 5
 
         self.message_history = {}
         self.spam_levels = {}
@@ -102,18 +109,50 @@ class Timeout:
         else:
             self.message_history[author] = self.message_history[author] \
                                                           + [timestamp]
+            self.reset_if_needed(author)
             is_spam = self.check_for_spam(author)
+            need_warning = self.check_for_warning(author)
+
             if is_spam:
                 self.shitlist.append(author)
                 self.message_history[author] = []
                 self.spam_levels[author] = 1
                 try:
                     await self.bot.kick(message.author)
-                    m = "Spam detected from " + author \
+                    m = "TRIGGERED! Spam detected from " + author \
                         + ". Silencing this filthy peasant."
                     await self.bot.send_message(message.channel, m)
                 except discord.errors.Forbidden:
                     pass
+
+            if need_warning:
+                try:
+                    m = message.author.mention + " TRIGGER WARNING! " + \
+                        " I am literally shaking, please stop spamming " \
+                        + "the channel."
+                    await self.bot.send_message(message.channel, m)
+                except:
+                    pass
+
+    def check_for_warning(self, author):
+        if self.spam_levels[author] >= self.RX_MESSAGE_WARNING_THRESHOLD:
+            return True
+
+        return False
+
+    def reset_if_needed(self, author):
+        message_timestamps = self.message_history[author]
+        num_messages = len(message_timestamps)
+
+        # need to check the delta between very latest message
+        # and the message just before that one
+        if author in self.spam_levels:
+            if num_messages > 1:
+                if message_timestamps[num_messages-1] - \
+                   message_timestamps[num_messages-2] >= \
+                   self.RX_MESSAGE_RESET_THRESHOLD:
+                    self.spam_levels[author] = 1
+                    self.message_history[author] = []
 
     def check_for_spam(self, author):
         message_timestamps = self.message_history[author]
