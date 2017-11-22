@@ -163,13 +163,13 @@ class Timeout:
         # if they haven't sent enough messages total to be considered spam,
         # we can stop right here
         if num_messages < self.RX_MESSAGE_THRESHOLD:
-            return
+            return False
 
         # compare self.RX_MESSAGE_THRESHOLD total messages from the message
         # history. if enough flags found for RX Messages (sent too fast),
         # globally mute the user for 5 minutes by default.
         if author in self.spam_levels:
-            spamlevel = self.spam_levels[author]
+            spamlevel = int(self.spam_levels[author])
         else:
             spamlevel = 1
 
