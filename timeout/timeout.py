@@ -159,6 +159,7 @@ class Timeout:
         num_messages = len(message_timestamps)
 
         log.debug("num messages =", num_messages)
+        authorInSpam = False
 
         # if they haven't sent enough messages total to be considered spam,
         # we can stop right here
@@ -170,6 +171,7 @@ class Timeout:
         # globally mute the user for 5 minutes by default.
         if author in self.spam_levels:
             spamlevel = int(self.spam_levels[author])
+            authorInSpam = True
         else:
             spamlevel = 1
 
@@ -186,7 +188,7 @@ class Timeout:
 
         self.spam_levels[author] = spamlevel
 
-        if self.spam_levels[author] >= self.RX_MESSAGE_THRESHOLD:
+        if authorInSpam and int(self.spam_levels[author]) >= self.RX_MESSAGE_THRESHOLD:
             message = "spam detected from [" + author + "], spamlevel=" \
                         + str(spamlevel)
             log.debug(message)
