@@ -34,6 +34,13 @@ class Timeout:
         self.shitlist = []
         self.mutelist = {}
 
+        # a whitelist for discord accounts to avoid timeouts
+        self.whitelist = []
+        self.whitelist.append(self.bot.user.id)
+
+        # whitelist the Rhythm bot ID
+        self.whitelist.append("235088799074484224")
+
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
     async def spam(self, command=None):
@@ -52,6 +59,17 @@ class Timeout:
 
         else:
             return
+
+    @commands.command(pass_context=False)
+    @checks.mod_or_permissions(kick_members=True)
+    async def whitelist(self, member: discord.Member=None)
+        if member:
+            try:
+                await self.whitelist.append(member.id)
+                message = "Added {} to whitelist.".format(member.display_name)
+                await self.bot.say(message)
+            except Exception as e:
+                pass
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
@@ -96,7 +114,7 @@ class Timeout:
         author = message.author.display_name
 
         # don't detect bot messages as spam
-        if message.author.id == self.bot.user.id:
+        if message.author.id in self.whitelist:
             return
 
         # if it's the user's first message, add a timestamp
