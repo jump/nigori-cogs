@@ -62,7 +62,7 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def immunity(self, member: discord.Member = None, command=None):
+    async def immunity(self, member: discord.Member = None):
         if member:
             try:
                 await self.whitelist.append(member.id)
@@ -70,11 +70,14 @@ class Timeout:
                 await self.bot.say(message)
             except Exception as e:
                 pass
-        if command == "list":
-            if self.whitelist:
-                for item in self.whitelist:
-                    message = item + " is on the whitelist."
-                    await self.bot.say(message)
+
+    @commands.command(pass_context=False)
+    @checks.mod_or_permissions(kick_members=True)
+    async def showimmunity(self):
+        if self.whitelist:
+            for item in self.whitelist:
+                message = item + " is on the whitelist."
+                await self.bot.say(message)
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
