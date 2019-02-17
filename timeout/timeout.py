@@ -62,7 +62,7 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def whitelist(self, member: discord.Member = None, command=None):
+    async def immunity(self, member: discord.Member = None, command=None):
         if member:
             try:
                 await self.whitelist.append(member.id)
