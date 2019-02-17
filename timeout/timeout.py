@@ -62,7 +62,7 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def whitelist(self, member: discord.Member=None):
+    async def whitelist(self, member: discord.Member = None):
         if member:
             try:
                 await self.whitelist.append(member.id)
@@ -73,29 +73,26 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def timeout(self, member: discord.Member=None, minutes=None):
+    async def timeout(self, member: discord.Member = None, minutes=None):
         if member and not minutes:
             try:
-                await self.bot.server_voice_state(
-                      member, mute=True, deafen=True)
+                await self.bot.server_voice_state(member, mute=True, deafen=True)
                 timestamp = datetime.now().timestamp()
                 self.mutelist[member.id] = timestamp
-                message = "Muting {} for default time of 3 minutes.".format(
-                           member.display_name)
+                message = "Muting {} for default time of 3 minutes.".format(member.display_name)
                 await self.bot.say(message)
                 await self.sleep_timer(member, 3)
-            except:
+            except Exception as e:
                 pass
         elif member and minutes:
             await self.bot.server_voice_state(member, mute=True, deafen=True)
             timestamp = datetime.now().timestamp()
             self.mutelist[member.id] = timestamp
-            message = "Muting {} for specified time of {} minutes.".format(
-                       member.display_name, minutes)
+            message = "Muting {} for specified time of {} minutes.".format(member.display_name, minutes)
             await self.bot.say(message)
             await self.sleep_timer(member, minutes)
 
-    async def sleep_timer(self, member: discord.Member=None, time=None):
+    async def sleep_timer(self, member: discord.Member = None, time=None):
         if time:
             minutes = int(time)
             await asyncio.sleep(minutes)
@@ -103,7 +100,7 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def unmute_member(self, member: discord.Member=None):
+    async def unmute_member(self, member: discord.Member = None):
         await self.bot.server_voice_state(member, mute=False, deafen=False)
         self.mutelist.pop(member.id, None)
         message = "{} is now unmuted".format(member.display_name)
@@ -125,8 +122,7 @@ class Timeout:
         elif author not in self.message_history:
             self.message_history[author] = [timestamp]
         else:
-            self.message_history[author] = self.message_history[author] \
-                                                          + [timestamp]
+            self.message_history[author] = self.message_history[author] + [timestamp]
             self.reset_if_needed(author)
             is_spam = self.check_for_spam(author)
             need_warning = self.check_for_warning(author)
@@ -149,7 +145,7 @@ class Timeout:
                         " I am literally shaking, please stop spamming " \
                         + "the channel."
                     await self.bot.send_message(message.channel, m)
-                except:
+                except Exception as e:
                     pass
 
     def check_for_warning(self, author):
@@ -197,19 +193,18 @@ class Timeout:
         log.debug("num messages = ", num_messages)
         log.debug("spam level = ", spamlevel)
 
-        for i in range(0, num_messages-1, 1):
+        for i in range(0, num_messages - 1, 1):
             try:
-                if message_timestamps[i+1] - message_timestamps[i] \
+                if message_timestamps[i + 1] - message_timestamps[i] \
                         <= self.RX_MESSAGE_DELTA_THRESHOLD:
                     spamlevel += 1
-            except:
+            except Exception as e:
                 pass
 
         self.spam_levels[author] = spamlevel
 
         if authorInSpam and int(self.spam_levels[author]) >= self.RX_MESSAGE_THRESHOLD:
-            message = "spam detected from [" + author + "], spamlevel=" \
-                        + str(spamlevel)
+            message = "spam detected from [" + author + "], spamlevel=" + str(spamlevel)
             log.debug(message)
             return True
 
