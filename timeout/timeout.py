@@ -62,7 +62,7 @@ class Timeout:
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
-    async def whitelist(self, member: discord.Member = None):
+    async def whitelist(self, member: discord.Member = None, command=None):
         if member:
             try:
                 await self.whitelist.append(member.id)
@@ -70,6 +70,11 @@ class Timeout:
                 await self.bot.say(message)
             except Exception as e:
                 pass
+        if command == "list":
+            if self.whitelist:
+                for item in self.whitelist:
+                    message = item + " is on the whitelist."
+                    await self.bot.say(message)
 
     @commands.command(pass_context=False)
     @checks.mod_or_permissions(kick_members=True)
