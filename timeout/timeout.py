@@ -153,8 +153,9 @@ class Timeout:
                     pass
 
     def check_for_warning(self, author):
-        if self.spam_levels[author] >= self.RX_MESSAGE_WARNING_THRESHOLD:
-            return True
+        if self.spam_levels[author]:
+            if self.spam_levels[author] >= self.RX_MESSAGE_WARNING_THRESHOLD:
+                return True
 
         return False
 
