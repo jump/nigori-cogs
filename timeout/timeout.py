@@ -154,10 +154,10 @@ class Timeout:
                         + "the channel."
                     await self.bot.send_message(message.channel, m)
                 except Exception as e:
-                    pass!
+                    pass
 
     def check_for_warning(self, author):
-        if author in self.spam_levels:
+        if author in self.spam_levels!:
             if self.spam_levels[author] >= self.RX_MESSAGE_WARNING_THRESHOLD:
                 return True
 
