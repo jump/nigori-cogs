@@ -26,7 +26,7 @@ class Autostatus:
         if newstatus:
             self.autostatus['startup'] = str(newstatus).strip()
             fileIO("data/autostatus/autostatus.json", "save", self.autostatus)
-            await self.bot.change_presence(game=None, status=newstatus, afk=False)
+            await self.bot.change_presence(game=discord.Game(name=newstatus))
         else:
             response = 'Usage: !status "add the status you want here"'
             if self.autostatus:
@@ -36,9 +36,8 @@ class Autostatus:
     async def on_ready(self):
         await self.bot.wait_until_ready()
         if self.autostatus['startup']:
-            log.debug("attempting to set the status to {}".format(
-                   self.autostatus['startup']))
-            await self.bot.change_presence(game=None, status=self.autostatus['startup'], afk=False)
+            log.debug("attempting to set the status to {}".format(self.autostatus['startup']))
+            await self.bot.change_presence(game=discord.Game(name=self.autostatus['startup']))
         else:
             return
 
